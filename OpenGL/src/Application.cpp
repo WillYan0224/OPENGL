@@ -31,8 +31,10 @@ static ShaderProgramSource ParseShader(const std::string& filepath)
         if (line.find("#shader") != std::string::npos)
         {
             if (line.find("vertex") != std::string::npos)
+                // set mode to vertex
                 type = ShaderType::VERTEX;
             else if (line.find("fragment") != std::string::npos)
+                // set mode to fragment
                 type = ShaderType::FRAGMENT;
         }
         else
@@ -81,13 +83,13 @@ static unsigned int CreateShader(const std::string& vertexShader, const std::str
     unsigned int fs = CompileShader(GL_FRAGMENT_SHADER, fragmentShader); 
 
 
-    /* ------- link vs & fs -------  */        
+    /* ------- Link vs & fs -------  */        
     glAttachShader(program, vs);
     glAttachShader(program, fs);
     glLinkProgram(program);
     glValidateProgram(program);
 	
-	/* ------- clear shader ------- */
+	/* ------- Clear shader ------- */
     glDeleteShader(vs);
     glDeleteShader(fs);
 
@@ -147,14 +149,18 @@ int main(void)
     glEnableVertexAttribArray(0); //  Enable vertex attribute
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0); // buffer layout
 
-    /* ------------- インデックス -------------  */
+    /* ------------- Index -------------  */
     unsigned int ibo;
     glGenBuffers(1, &ibo);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indices, GL_STATIC_DRAW); 
 
-    /* ------------- shader ------------- */ 
+    /* ------------- Shader ------------- */ 
     ShaderProgramSource source = ParseShader("res/shaders/Basic.shader");
+    std::cout << "FRAGMENT" << std::endl;
+    std::cout << source.FragmentSource << std::endl;
+    std::cout << "VERTEXX" << std::endl;
+    std::cout << source.VertexSource << std::endl;
 	unsigned int shader = CreateShader(source.VertexSource, source.FragmentSource);
 	glUseProgram(shader); // Shader bounded
 
