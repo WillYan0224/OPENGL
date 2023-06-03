@@ -6,8 +6,7 @@
 #include <string>
 #include <sstream>
 
-/* ------------- Debug用 -------------  */
-
+/* For debug */
 struct ShaderProgramSource
 {
     std::string VertexSource;
@@ -19,12 +18,12 @@ static ShaderProgramSource ParseShader(const std::string& filepath)
     std::ifstream stream(filepath);
     enum class ShaderType
     {
-        NONE = -1, VERTEX = 0, FRAGMENT = 1 // 後ほどArrayのタイプキャストのため
+        NONE = -1, VERTEX = 0, FRAGMENT = 1 // for type cast
     };
      
     std::string line;
     std::stringstream ss[2]; // 
-    ShaderType type = ShaderType::NONE; // デフォルトステート
+    ShaderType type = ShaderType::NONE; // default state
 
     while(getline(stream, line))
     {
@@ -40,21 +39,21 @@ static ShaderProgramSource ParseShader(const std::string& filepath)
         {
             ss[(int)type] << line << "\n";
         }
-        // struct用いてReturn 2 string
+        // return multiple value by struct
     }
     return { ss[0].str(), ss[1].str() };
 }
 
-static unsigned int CompileShader(unsigned int type, const std::string& source) // OPENGLにSHADERをコンパイルさせ
+static unsigned int CompileShader(unsigned int type, const std::string& source)
 {
     unsigned int id = glCreateShader(type);
-    const char* src = source.c_str(); // スコープ注意！！ Rubbish memory        source -> src:  string -> char
-    glShaderSource(id, 1, &src, nullptr); // 
+    const char* src = source.c_str(); // source -> src:  string -> char
+    glShaderSource(id, 1, &src, nullptr); 
     glCompileShader(id);
 
     /* Error Handling */
     int result;
-    glGetShaderiv(id, GL_COMPILE_STATUS, &result); //
+    glGetShaderiv(id, GL_COMPILE_STATUS, &result); 
     if(result == GL_FALSE)
     {
         int length;
@@ -71,23 +70,23 @@ static unsigned int CompileShader(unsigned int type, const std::string& source) 
     	return 0;
     }
 
-	return id; // IDを戻す 
+	return id; 
 }
 
 
 static unsigned int CreateShader(const std::string& vertexShader, const std::string& fragmentShader) // Avoid leaking (Static)
 {
-    unsigned int program = glCreateProgram();  // (unsigned int) Program 作成 (for idバッファ)
+    unsigned int program = glCreateProgram();  
     unsigned int vs = CompileShader(GL_VERTEX_SHADER, vertexShader); 
     unsigned int fs = CompileShader(GL_FRAGMENT_SHADER, fragmentShader); 
 
 
-    /* ------- vs&fsをリンクする -------  */        
+    /* ------- link vs & fs -------  */        
     glAttachShader(program, vs);
     glAttachShader(program, fs);
     glLinkProgram(program);
     glValidateProgram(program);
-	/* ------- vs&fs → program -------  */
+	
 	/* ------- clear shader ------- */
     glDeleteShader(vs);
     glDeleteShader(fs);
@@ -123,44 +122,43 @@ int main(void)
     }
 
    
-    float positions[] = { // メモリバッファ
+    float positions[] = { // mem buffer
         -0.5f, -0.5f, // 0
          0.5f, -0.5f, // 1
          0.5f,  0.5f, // 2
     	-0.5f,  0.5f, // 3
     };
 
-    unsigned int indices[] = { // 重要：Unsigned
+    unsigned int indices[] = { 
     	0, 1 , 2,
         2, 3 , 0,
     };
 
     std::cout << glGetString(GL_VERSION) << std::endl;
 
-    /* ------------- Vertex Buffer 作成 ------------- */
+    /* ------------- Vertex Buffer  ------------- */
     unsigned int buffer;
-    glGenBuffers(1, &buffer); // バッファID生成
-    glBindBuffer(GL_ARRAY_BUFFER, buffer); // BINDはSELECTという意味
-	// glBindBuffer(GL_ARRAY_BUFFER, 0); // 0:　無効なID
+    glGenBuffers(1, &buffer); // Gen buffer id
+    glBindBuffer(GL_ARRAY_BUFFER, buffer); // bind = select
 
 	glBufferData(GL_ARRAY_BUFFER, 6 * 2 *sizeof(float), positions, GL_STATIC_DRAW);
 
  
-    glEnableVertexAttribArray(0); //  Enable　重要！！
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0); // バッファlayout作成＋Binding -> index 0に
+    glEnableVertexAttribArray(0); //  Enable vertex attribute
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0); // buffer layout
 
     /* ------------- インデックス -------------  */
     unsigned int ibo;
     glGenBuffers(1, &ibo);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indices, GL_STATIC_DRAW); // 重要：Unsigned
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indices, GL_STATIC_DRAW); 
 
-    /* ------------- シェーダ ------------- */ // 光や影ではない　           本質→プログラム
+    /* ------------- shader ------------- */ 
     ShaderProgramSource source = ParseShader("res/shaders/Basic.shader");
 	unsigned int shader = CreateShader(source.VertexSource, source.FragmentSource);
 	glUseProgram(shader); // Shader bounded
 
-	/* ------------- Uniform: Shader Painting -------------  */ // 重要: Uniformはバインドされたシェーダの後
+	/* ------------- Uniform: Shader Painting -------------  */ // 
     int location = glGetUniformLocation(shader, "u_Color");
     glUniform4f(location, 0.6f, 0.2, 0.8f, 1.0f); // 4f: vec4(4 Components) & Float
    
@@ -175,15 +173,14 @@ int main(void)
     while (!glfwWindowShouldClose(window))
     {
         /* Render here */
-        glClear(GL_COLOR_BUFFER_BIT); // スクリーン作成
-
+        glClear(GL_COLOR_BUFFER_BIT); 
 
         glUniform4f(location, r, 0.5f, 0.2f, 1.0f); // 4f: vec4(4 Components) & Float
-        // glDrawArrays(GL_TRIANGLES, 0, 3); // Vertex Buffer使う場合は　これを使う
-        glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, nullptr);  // Index Buffer使う場合はこれを使う Drawing 
+        // glDrawArrays(GL_TRIANGLES, 0, 3); // Vertex Buffer
+        glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, nullptr);  // Index Buffer
         // glDrawElements(GL_TRIANGLES, 3, GLfloat, NULL); 
 
-        /* ------------- 色変わる ------------- */
+        /* ------------- Change color ------------- */
         if (r > 1.0f)
             increment = -0.005;
         else if (r < 0.0f)
@@ -197,7 +194,7 @@ int main(void)
         glfwPollEvents();
     }
 
-    glDeleteProgram(shader); // シェーダー消す
+    glDeleteProgram(shader); // clear shader
 
     glfwTerminate();
     return 0;
