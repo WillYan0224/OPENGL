@@ -1,5 +1,0 @@
-﻿  Application.cpp
-C:\Users\lc472\Documents\cpp_project\OpenGL\OpenGL\OpenGL\src\Application.cpp(169,48): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
-C:\Users\lc472\Documents\cpp_project\OpenGL\OpenGL\OpenGL\src\Application.cpp(191,31): warning C4305: '=': truncation from 'double' to 'float'
-C:\Users\lc472\Documents\cpp_project\OpenGL\OpenGL\OpenGL\src\Application.cpp(193,30): warning C4305: '=': truncation from 'double' to 'float'
-  OpenGL.vcxproj -> C:\Users\lc472\Documents\cpp_project\OpenGL\OpenGL\Debug\OpenGL.exe
