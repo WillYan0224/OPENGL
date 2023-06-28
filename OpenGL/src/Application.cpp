@@ -119,6 +119,8 @@ int main(void)
 
 			ImGui_ImplGlfwGL3_NewFrame();
 
+
+			/* mvp = Projection M * View M * Model M  (OPENGL pipline) */
 			glm::mat4 model = glm::translate(glm::mat4(1.0f), translation);
 			glm::mat4 mvp = proj * view * model;
 
