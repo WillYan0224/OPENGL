@@ -597,7 +597,12 @@ namespace glm
 	typedef mat<3, 4, f32, lowp>		lowp_mat3x4;
 	typedef mat<4, 2, f32, lowp>		lowp_mat4x2;
 	typedef mat<4, 3, f32, lowp>		lowp_mat4x3;
-	typedef mat<4, 4, f32, lowp>		lowp_mat4x4;
+	typedef mat<4, 4, f32, lowp>		lowp_mat
+
+
+
+
+	;
 
 	typedef mat<2, 2, f32, mediump>		mediump_mat2x2;
 	typedef mat<2, 3, f32, mediump>		mediump_mat2x3;

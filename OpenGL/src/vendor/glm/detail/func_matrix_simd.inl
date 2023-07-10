@@ -1,6 +1,10 @@
 #if GLM_ARCH & GLM_ARCH_SSE2_BIT
 
-#include "type_mat4x4.hpp"
+#include "type_mat
+
+
+
+.hpp"
 #include "../geometric.hpp"
 #include "../simd/matrix.h"
 #include <cstring>
