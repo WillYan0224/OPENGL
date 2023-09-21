@@ -151,10 +151,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\IndexBuffer.cpp" />
     <ClCompile Include="src\Renderer.cpp" />
-    <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\tests\TestClearColor.cpp" />
     <ClCompile Include="src\vendor\glm\detail\glm.cpp" />
     <ClCompile Include="src\vendor\imgui\imgui.cpp" />

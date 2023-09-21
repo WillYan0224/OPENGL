@@ -64,6 +64,9 @@ int main(void)
 		ImGui_ImplGlfwGL3_Init(window, true);
 		ImGui::StyleColorsDark();
 		
+		ImGuiIO& io = ImGui::GetIO();
+		(void)io;
+
 		test::TestClearColor test;
 
 		while (!glfwWindowShouldClose(window))
@@ -72,8 +75,40 @@ int main(void)
 
 			test.OnUpdate(0.0f);
 			test.OnRender();
-
+			
 			ImGui_ImplGlfwGL3_NewFrame();
+
+
+
+			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+			ImGui::Text("%s", glGetString(GL_VENDOR));
+			ImGui::NewLine();
+			ImGui::Button("Update Drive");
+			if (ImGui::BeginMainMenuBar()) {
+				if (ImGui::BeginMenu("New")) {
+					// Do sth
+					if (ImGui::MenuItem("Create")) {
+						// Do sth
+					}
+					ImGui::EndMenu();
+				}
+				if (ImGui::BeginMenu("Edit")) {
+					// Do sth
+					if (ImGui::MenuItem("Copy")) {
+						// Do sth
+					}
+					ImGui::EndMenu();
+				}
+				if (ImGui::BeginMenu("View")) {
+					// Do sth
+					if (ImGui::MenuItem("Open")) {
+						// Do sth
+					}
+					ImGui::EndMenu();
+				}
+				ImGui::EndMainMenuBar();
+			}
+
 			test.OnImGuiRender();
 
 			ImGui::Render();
