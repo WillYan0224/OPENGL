@@ -67,18 +67,31 @@ int main(void)
 		ImGuiIO& io = ImGui::GetIO();
 		(void)io;
 
-		test::TestClearColor test;
+		test::Test* currentTest = nullptr;
+		test::TestMenu* testmenu = new test::TestMenu(currentTest);
+		currentTest = testmenu;
+
+		testmenu->RegisterTest<test::TestClearColor>("Clear Color");
 
 		while (!glfwWindowShouldClose(window))
 		{
-			renderer.Clear();
-
-			test.OnUpdate(0.0f);
-			test.OnRender();
-			
+			GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
+			renderer.Clear();		
+					
 			ImGui_ImplGlfwGL3_NewFrame();
 
-
+			if (currentTest) {
+				currentTest->OnUpdate(0.0f);
+				currentTest->OnRender();
+				ImGui::Begin("Test");
+				if (currentTest != testmenu && ImGui::Button("<-"))
+				{
+					delete currentTest;
+					currentTest = testmenu;
+				}
+				currentTest->OnImGuiRender();
+				ImGui::End();
+			}
 
 			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
 			ImGui::Text("%s", glGetString(GL_VENDOR));
@@ -109,8 +122,6 @@ int main(void)
 				ImGui::EndMainMenuBar();
 			}
 
-			test.OnImGuiRender();
-
 			ImGui::Render();
 			ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
 
@@ -118,7 +129,12 @@ int main(void)
 
 			glfwPollEvents();
 		}
+		delete currentTest;
+		if (currentTest != testmenu) {
+			delete testmenu;
+		}
 	}
+
 	ImGui_ImplGlfwGL3_Shutdown();
 	ImGui::DestroyContext();
 	glfwTerminate();
